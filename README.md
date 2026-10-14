@@ -7,7 +7,7 @@ TimetableSolution/
     │   ├── Aggregates/         # Lesson, TimeSlot
     │   └── IRepositories/      # ILessonRepository, IGroupRepository
     ├── Timetable.Application/
-    │   ├── Common/             # Interfaces, Mappings
+    │   ├── Common/             # Interfaces, Mappings, Mediator
     │   ├── Lessons/
     │   │   ├── Commands/CreateLesson/ # Creat, Update, Delete
     │   │   └── Queries/GetGroupSchedule/ # Read
@@ -21,6 +21,7 @@ TimetableSolution/
         ├── Middlewares/        # ExceptionHandlingMiddleware
         ├── appsettings.json    # ConnectionStrings
         └── Program.cs
+
 ```
 
 BaseEntity example:
@@ -43,10 +44,8 @@ ValueObject example:
 
 //Value Object зазвичай достатньо використати record:
 
-public record TimeSlot(int LessonNumber, TimeSpan StartTime, TimeSpan EndTime);
-\\
-\\
-\\
+    public record TimeSlot(int LessonNumber, TimeSpan StartTime, TimeSpan EndTime);
+
 Схема руху даних
 
 1. Клік користувача на сторінці «Зберегти пару»
