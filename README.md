@@ -1,37 +1,63 @@
-sequenceDiagram
-    autonumber
-    actor User as Студент / Диспетчер
-    participant FE as Frontend (SPA)
-    participant API as Web API (Controllers / Endpoints)
-    participant Med as MediatR (Pipeline & Handlers)
-    participant Repo as Dapper / SQLite
-    participant DB as SQLite Database
+```text
+TimetableSolution/
+└── src/
+    ├── Timetable.Domain/
+    │   ├── Common/             # BaseEntity, ValueObject
+    │   ├── Entities/           # Teacher, Group, Classroom, Subject
+    │   ├── Aggregates/         # Lesson, TimeSlot
+    │   └── IRepositories/      # ILessonRepository, IGroupRepository
+    ├── Timetable.Application/
+    │   ├── Common/             # Interfaces, Mappings
+    │   ├── Lessons/
+    │   │   ├── Commands/CreateLesson/ # Creat, Update, Delete
+    │   │   └── Queries/GetGroupSchedule/ # Read
+    │   └── DependencyInjection.cs
+    ├── Timetable.Infrastructure/
+    │   ├── Database/           # SqliteConnectionContext, Migrations
+    │   ├── Repositories/       # LessonRepository
+    │   └── DependencyInjection.cs
+    └── Timetable.Web.Api/
+        ├── Controllers/        # SchedulesController, LessonsController
+        ├── Middlewares/        # ExceptionHandlingMiddleware
+        ├── appsettings.json    # ConnectionStrings
+        └── Program.cs
+```
 
-    Note over User, FE: Сценарій 1: Перегляд розкладу (Query)
-    User->>FE: Обирає групу "КН-21" та тиждень
-    FE->>API: GET /api/v1/schedules/group/КН-21?week=2
-    API->>Med: Send(new GetGroupScheduleQuery(groupId, week))
-    Med->>Repo: Виконання оптимізованого SQL SELECT через Dapper
-    Repo->>DB: Query<ScheduleItemDto>(SQL)
-    DB-->>Repo: Результат рядків
-    Repo-->>Med: Список DTO
-    Med-->>API: 200 OK (ScheduleResponse)
-    API-->>FE: JSON з розкладом
-    FE-->>User: Рендеринг сітки розкладу
+BaseEntity example:
 
-    Note over User, FE: Сценарій 2: Створення пари (Command)
-    User->>FE: Заповнює форму "Додати пару"
-    FE->>API: POST /api/v1/lessons (CreateLessonDto)
-    API->>Med: Send(new CreateLessonCommand(...))
-    activate Med
-    Med->>Med: ValidationBehavior (FluentValidation)
-    Med->>Repo: Перевірка колізій (чи вільний викладач і аудиторія?)
-    Repo->>DB: SELECT COUNT(1) WHERE ...
-    DB-->>Repo: 0 (вільно)
-    Med->>Repo: ILessonRepository.AddAsync(lessonAggregate)
-    Repo->>DB: INSERT INTO Lessons (...)
-    DB-->>Repo: Id створеного запису
-    Med-->>API: Result.Success(lessonId)
-    deactivate Med
-    API-->>FE: 201 Created { id: "guid" }
-    FE-->>User: Повідомлення про успіх та оновлення сітки
+public abstract class BaseEntity
+{
+    public Guid Id { get; protected set; } = Guid.NewGuid();
+    public DateTime CreatedAtUtc { get; protected set; } = DateTime.UtcNow;
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not BaseEntity other) return false;
+        return Id == other.Id;
+    }
+
+    public override int GetHashCode() => Id.GetHashCode();
+}
+
+ValueObject example:
+
+//Value Object зазвичай достатньо використати record:
+
+public record TimeSlot(int LessonNumber, TimeSpan StartTime, TimeSpan EndTime);
+\\
+\\
+\\
+Схема руху даних
+
+1. Клік користувача на сторінці «Зберегти пару»
+
+2. Angular: API-сервіс летить HTTP-запит
+
+3. Web API Контролер хендлить 
+
+4. MediatR та валідатор
+
+5. (Domain) перевіряються головні правила університету: чи вільна ця аудиторія, чи немає у викладача іншої пари в цей час ...
+
+6. Запис в базу повертає id або статус і він летить на верх 
+
