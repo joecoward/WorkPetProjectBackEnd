@@ -9,6 +9,8 @@ namespace Timetable.Domain.Aggregates
         public TimeSpan StartTime { get; }
         public TimeSpan EndTime { get; }
 
+        protected TimeSlot() { }
+
         public TimeSlot(TimeSpan startTime, TimeSpan endTime)
         {
             if (startTime >= endTime)

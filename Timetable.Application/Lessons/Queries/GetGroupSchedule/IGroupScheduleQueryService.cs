@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Timetable.Application.Lessons.Queries.GetGroupSchedule
+﻿namespace Timetable.Application.Lessons.Queries.GetGroupSchedule
 {
     public interface IGroupScheduleQueryService
     {

@@ -15,6 +15,8 @@ namespace Timetable.Domain.Aggregates
         public DateOnly Date { get; private set; }
         public TimeSlot Time { get; private set; }
 
+        protected Lesson() { }
+
         public Lesson(Guid id, Guid subjectId, Guid teacherId, Guid groupId, Guid classroomId, DateOnly date, TimeSlot time)
         {
             Id = id;

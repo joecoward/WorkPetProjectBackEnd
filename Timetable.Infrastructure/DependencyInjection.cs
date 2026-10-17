@@ -1,10 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Timetable.Application.Groups.Queries.GetGroups;
+using Timetable.Application.Lessons.Queries.GetGroupSchedule;
+using Timetable.Domain.IRepositories;
+using Timetable.Infrastructure.Database;
+using Timetable.Infrastructure.Queries;
+using Timetable.Infrastructure.Repositories;
 
-namespace Timetable.Infrastructure
+namespace Timetable.Infrastructure;
+
+public static class DependencyInjection
 {
-    internal class DependencyInjection
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        // міграція
+        services.AddDbContext<SqliteConnectionContext>(options =>
+            options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<ILessonRepository, LessonRepository>();
+        services.AddScoped<IGroupRepository, GroupRepository>();
+
+        services.AddScoped<IGroupScheduleQueryService, GroupScheduleQueryService>();
+        services.AddScoped<IGroupQueryService, GroupQueryService>();    
+
+        return services;
     }
 }
