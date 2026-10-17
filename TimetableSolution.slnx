@@ -1,1 +1,6 @@
-<Solution />
+<Solution>
+  <Project Path="Timetable.Application/Timetable.Application.csproj" />
+  <Project Path="Timetable.Domain/Timetable.Domain.csproj" />
+  <Project Path="Timetable.Infrastructure/Timetable.Infrastructure.csproj" />
+  <Project Path="Timetable.Web.Api/Timetable.Web.Api.csproj" />
+</Solution>

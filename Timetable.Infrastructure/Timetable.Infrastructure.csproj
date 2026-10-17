@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Timetable.Application\Timetable.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Database\" />
+    <Folder Include="Lessons\Queries\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
 </Project>

@@ -4,7 +4,15 @@ using System.Text;
 
 namespace Timetable.Domain.Entities
 {
-    internal class Group
+    public class Group
     {
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
+
+        public Group(Guid id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }
