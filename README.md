@@ -2,7 +2,6 @@
 TimetableSolution/
 └── src/
     ├── Timetable.Domain/
-    │   ├── Common/             # BaseEntity, ValueObject
     │   ├── Entities/           # Teacher, Group, Classroom, Subject
     │   ├── Aggregates/         # Lesson, TimeSlot
     │   └── IRepositories/      # ILessonRepository, IGroupRepository
