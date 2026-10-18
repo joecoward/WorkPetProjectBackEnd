@@ -1,4 +1,7 @@
 ﻿namespace Timetable.Domain.Groups.Queries.GetGroups
 {
-    public record GroupDto(Guid Id, string Name);
+    public record GroupDto {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+    }
 }

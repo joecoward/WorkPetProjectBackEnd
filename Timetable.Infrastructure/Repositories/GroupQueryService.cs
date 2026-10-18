@@ -16,7 +16,7 @@ public class GroupQueryService : IGroupQueryService
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
     }
 
-    public async Task<IList<GroupDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IList<GroupDto>> GetGroupsAsync(CancellationToken cancellationToken = default)
     {
         const string sql = "SELECT Id, Name FROM Groups ORDER BY Name;";
 

@@ -20,6 +20,9 @@ public static class DependencyInjection
 
         services.AddScoped<ILessonRepository, LessonRepository>();
         services.AddScoped<IGroupRepository, GroupRepository>();
+        services.AddScoped<ITeacherRepository, TeacherRepository>();
+        services.AddScoped<ISubjectRepository, SubjectRepository>();
+        services.AddScoped<IClassroomRepository, ClassroomRepository>();
 
         services.AddScoped<IGroupScheduleQueryService, GroupScheduleQueryService>();
         services.AddScoped<IGroupQueryService, GroupQueryService>();    

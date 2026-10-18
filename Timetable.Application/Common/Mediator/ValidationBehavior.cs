@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
 namespace Timetable.Application.Common.Mediator;
 

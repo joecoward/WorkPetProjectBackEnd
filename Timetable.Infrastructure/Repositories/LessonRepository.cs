@@ -88,4 +88,9 @@ public class LessonRepository : ILessonRepository
         using var connection = new SqliteConnection(_connectionString);
         await connection.ExecuteAsync(sql, new { lesson.Id });
     }
+
+    public Task<List<Lesson>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }

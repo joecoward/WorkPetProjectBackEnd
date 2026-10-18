@@ -1,9 +1,11 @@
-﻿using Timetable.Domain.Groups.Queries.GetGroups;
+﻿using System;
+
+using Timetable.Domain.Groups.Queries.GetGroups;
 
 namespace Timetable.Application.Groups.Queries.GetGroups
 {
     public interface IGroupQueryService
     {
-        Task<IList<GroupDto>> GetAllAsync(CancellationToken cancellationToken = default);
+        public Task<IList<GroupDto>> GetGroupsAsync(CancellationToken cancellationToken = default);
     }
 }
