@@ -22,6 +22,10 @@ public class GroupQueryService : IGroupQueryService
 
         using var connection = new SqliteConnection(_connectionString);
 
-        return (await connection.QueryAsync<GroupDto>(sql)).AsList();
+        var rawRows = await connection.QueryAsync(sql);
+
+        return rawRows.Select(r => new GroupDto {
+            Id = Guid.Parse((string)r.Id),
+            Name = (string)r.Name}).ToList();
     }
 }

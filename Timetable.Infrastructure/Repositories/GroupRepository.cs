@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿// src/Timetable.Infrastructure/Repositories/GroupRepository.cs
+using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Timetable.Domain.Entities;
@@ -18,17 +19,37 @@ public class GroupRepository : IGroupRepository
 
     public async Task<Group?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        const string sql = "SELECT Id, Name FROM Groups WHERE Id = @Id;";
+        const string sql = "SELECT Id, Name FROM Groups WHERE UPPER(Id) = UPPER(@Id);";
 
         using var connection = new SqliteConnection(_connectionString);
-        return await connection.QuerySingleOrDefaultAsync<Group>(sql, new { Id = id });
+        var rawGroup = await connection.QuerySingleOrDefaultAsync(sql, new { Id = id.ToString().ToUpper() });
+
+        if (rawGroup == null)
+            return null;
+
+        return new Group(Guid.Parse((string)rawGroup.Id), (string)rawGroup.Name);
     }
 
-    public async Task<List<Group>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task AddAsync(Group group, CancellationToken cancellationToken = default)
     {
-        const string sql = "SELECT Id, Name FROM Groups ORDER BY Name;";
+        const string sql = "INSERT INTO Groups (Id, Name) VALUES (@Id, @Name);";
 
         using var connection = new SqliteConnection(_connectionString);
-        return (await connection.QueryAsync<Group>(sql)).AsList();
+        await connection.ExecuteAsync(sql, new
+        {
+            Id = group.Id.ToString().ToUpper(),
+            Name = group.Name
+        });
+    }
+
+    public async Task DeleteAsync(Group group, CancellationToken cancellationToken = default)
+    {
+        const string sql = "DELETE FROM Groups WHERE Id = @Id;";
+
+        using var connection = new SqliteConnection(_connectionString);
+        await connection.ExecuteAsync(sql, new
+        {
+            Id = group.Id.ToString().ToUpper()
+        });
     }
 }

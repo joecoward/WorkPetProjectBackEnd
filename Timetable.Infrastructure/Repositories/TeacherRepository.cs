@@ -1,13 +1,31 @@
-﻿using Timetable.Domain.Entities;
+﻿using Dapper;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
+using Timetable.Domain.Entities;
 using Timetable.Domain.IRepositories;
 
 namespace Timetable.Infrastructure.Repositories
 {
-    internal class TeacherRepository : ITeacherRepository
+    public class TeacherRepository : ITeacherRepository
     {
-        public Task AddAsync(Teacher teacher, CancellationToken cancellationToken = default)
+        private readonly string _connectionString;
+
+        public TeacherRepository(IConfiguration configuration)
         {
-            throw new NotImplementedException();
+            _connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string not found.");
+        }
+        public async Task AddAsync(Teacher teacher, CancellationToken cancellationToken = default)
+        {
+            const string sql = "INSERT INTO Teachers (Id, FirstName, LastName) VALUES (@Id, @FirstName, @LastName);";
+
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.ExecuteAsync(sql, new
+            {
+                Id = teacher.Id.ToString().ToUpper(),
+                FirstName = teacher.FirstName,
+                LastName = teacher.LastName
+            });
         }
 
         public Task DeleteAsync(Teacher teacher, CancellationToken cancellationToken = default)
@@ -15,9 +33,18 @@ namespace Timetable.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<Teacher>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<List<Teacher>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            const string sql = "SELECT Id, FirstName, LastName FROM Teachers ORDER BY LastName, FirstName;";
+
+            using var connection = new SqliteConnection(_connectionString);
+            var rawRows = await connection.QueryAsync(sql);
+
+            return rawRows.Select(r => new Teacher(
+                Guid.Parse((string)r.Id),
+                (string)r.FirstName,
+                (string)r.LastName
+            )).ToList();
         }
 
         public Task<Teacher?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

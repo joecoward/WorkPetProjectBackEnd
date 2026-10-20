@@ -7,7 +7,7 @@ namespace Timetable.Domain.Aggregates
     public class Lesson
     {
         public Guid Id { get; private set; }
-        public Guid SubjectId { get; private set; }
+        public Guid SubjectId { get; private set; } //Subject ....
         public Guid TeacherId { get; private set; }
         public Guid GroupId { get; private set; }
         public Guid ClassroomId { get; private set; }
